@@ -13,7 +13,7 @@ module.exports = {
 
     const reactions = await messages.forEach(message => {
       message.reactions.cache.forEach(reaction => {
-        reactionsArray.push({count: reaction.count, id: reaction.message.id, time})
+        reactionsArray.push({count: reaction.count, id: reaction.message.id})
       })
     });
     console.log(reactionsArray);
