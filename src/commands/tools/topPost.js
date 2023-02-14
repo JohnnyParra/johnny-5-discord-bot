@@ -5,19 +5,23 @@ module.exports = {
     .setName("top-post")
     .setDescription("Returns top post on this channel"),
   async execute(interaction, client) {
+    let reactionsArray = []
+
     const messages = await client.channels.cache
       .get(interaction.channel.id)
       .messages.fetch({ limit: 100 });
-    // console.log(messages);
-    // console.log("\n////////////////////////");
-    const reactions = messages.forEach(message => {
-      console.log(message.reactions.cache)
-    })
+
+    const reactions = await messages.forEach(message => {
+      message.reactions.cache.forEach(reaction => {
+        reactionsArray.push({count: reaction.count, id: reaction.message.id, time})
+      })
+    });
+    console.log(reactionsArray);
     // const embed = new EmbedBuilder()
+    //   .setTitle("Top Posts")
 
     // await interaction.reply({
     //   embeds: [embed],
     // });
   },
 };
-1075115487190597672
