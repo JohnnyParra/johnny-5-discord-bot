@@ -17,13 +17,13 @@ module.exports = {
       let reactionsArray = []
       const messages = await getMessages();
       await messages.forEach(message => {
-        // console.log(message.reactions.cache);
+        // console.log(message.reactions.cache)
         message.reactions.cache.forEach(reaction => {
           const index = reactionsArray.findIndex(e => e.id === reaction.message.id)
           if (index > -1){
             reactionsArray[index].count += reaction.count;
           } else{
-            reactionsArray.push({count: reaction.count, id: reaction.message.id})
+            reactionsArray.push({count: reaction.count, id: reaction.message.id, message : reaction.message})
           }
         })
       })
@@ -39,18 +39,18 @@ module.exports = {
     .setTimestamp(Date.now())
     .addFields([
       {
-        name: "#1",
-        value: `${reactionsArray[0].count}`,
+        name: "#1 Post",
+        value: `Reactions: ${reactionsArray[0].count} ${reactionsArray[0].message.url}`,
         inline: true,
       },
       {
-        name: "#2",
-        value: `${reactionsArray[1].count}`,
-        inline: true,
+        name: "#2 Post",
+        value: `Reactions: ${reactionsArray[1].count} ${reactionsArray[1].message.url}`,
+        inline: false,
       },
       {
-        name: "#3",
-        value: `${reactionsArray[2].count}`,
+        name: "#3 Post",
+        value: `Reactions: ${reactionsArray[2].count} ${reactionsArray[2].message.url}`,
         inline: true,
       },
     ]);
