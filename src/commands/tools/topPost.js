@@ -39,17 +39,17 @@ module.exports = {
     .setTimestamp(Date.now())
     .addFields([
       {
-        name: "#1 Post",
+        name: `#1 Post: ${reactionsArray[0].message.author.username}`,
         value: `Reactions: ${reactionsArray[0].count} ${reactionsArray[0].message.url}`,
         inline: true,
       },
       {
-        name: "#2 Post",
+        name: `#2 Post: ${reactionsArray[1].message.author.username}`,
         value: `Reactions: ${reactionsArray[1].count} ${reactionsArray[1].message.url}`,
         inline: false,
       },
       {
-        name: "#3 Post",
+        name: `#3 Post: ${reactionsArray[2].message.author.username}`,
         value: `Reactions: ${reactionsArray[2].count} ${reactionsArray[2].message.url}`,
         inline: true,
       },
