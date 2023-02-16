@@ -3,7 +3,13 @@ require("dotenv").config();
 const { token, DatabaseURL } = process.env;
 const { Client, Collection, GatewayIntentBits } = require("discord.js");
 const { VoiceClient } = require("djs-voice");
+const mongoose = require("mongoose");
 const fs = require("fs");
+
+mongoose.set('strictQuery', true);
+mongoose.connect(DatabaseURL, {
+  keepAlive: true,
+}).then(console.log('db connected'))
 
 const client = new Client({
   intents: [
