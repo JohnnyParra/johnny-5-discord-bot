@@ -7,7 +7,7 @@ module.exports = {
   async execute(interaction, client) {
     const embed = await client.voiceClient.generateLeaderboard({
       guild: await interaction.guild,
-       top: 10, 
+      top: 10,
     });
     await interaction.reply({
       embeds: [embed],

@@ -20,8 +20,8 @@ module.exports = (client) => {
         );
       }
     }
-    const clientId = '1073359544434053230';
-    const guildId = '758514477024149515'; // restricts bot to server
+    const clientId = "1073359544434053230";
+    const guildId = "758514477024149515"; // restricts bot to server
     const rest = new REST({ version: "10" }).setToken(process.env.token);
     try {
       console.log("Started refreshing application (/) commands.");

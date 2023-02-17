@@ -1,9 +1,9 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 
 const reqString = {
   type: String,
-  required: true
-}
+  required: true,
+};
 
 const scheduleSchema = new mongoose.Schema({
   date: {
@@ -14,9 +14,9 @@ const scheduleSchema = new mongoose.Schema({
   guildId: reqString,
   channelId: reqString,
   userId: reqString,
-},
-)
+});
 
-const name = 'scheduled-posts'
+const name = "scheduled-posts";
 
-module.exports = mongoose.model[name] || mongoose.model(name, scheduleSchema, name)
+module.exports =
+  mongoose.model[name] || mongoose.model(name, scheduleSchema, name);

@@ -8,7 +8,7 @@ module.exports = {
     const message = await interaction.deferReply({
       fetchReply: true,
     });
-    
+
     const newMessage = `This command was run by ${interaction.user.username},\nWho joined on ${interaction.member.joinedAt}. `;
     await interaction.editReply({
       content: newMessage,
