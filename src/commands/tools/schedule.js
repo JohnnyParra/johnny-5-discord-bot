@@ -56,6 +56,7 @@ module.exports = {
       )
     ),
   async execute(interaction, client) {
+
     const [channel, year, month, day, hour, minute, meridiem, timezone] = interaction.options._hoistedOptions;
 
     const targetDate = momentTimezone.tz(
@@ -71,7 +72,7 @@ module.exports = {
     const filter = (newMessage) => {
       return newMessage.author.id === interaction.user.id
     }
-    console.log(interaction.guildId);
+
     const collector = interaction.channel.createMessageCollector({filter, max: 1, time:1000 * 60}); 
 
     collector.on('end', async (collected) => {
