@@ -13,6 +13,7 @@ const scheduleSchema = new mongoose.Schema({
   content: reqString,
   guildId: reqString,
   channelId: reqString,
+  userId: reqString,
 },
 )
 

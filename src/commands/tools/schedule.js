@@ -67,6 +67,7 @@ module.exports = {
 
     await interaction.reply({
       content: "Please send the message you would like to schedule",
+      ephemeral: true,
     });
 
     const filter = (newMessage) => {
@@ -79,14 +80,15 @@ module.exports = {
       const collectedMessage = collected.first();
 
       if(!collectedMessage){
-        await interaction.editReply({ content: "You did not reply in time."})
+        await interaction.editReply({ content: "You did not reply in time.", ephemeral: true,})
       } else{
-        await interaction.editReply({ content: "Your message has been scheduled"})
+        await interaction.editReply({ content: "Your message has been scheduled", ephemeral: true,})
         await new scheduleSchema({
           date: targetDate.valueOf(),
           content: collectedMessage.content,
           guildId: interaction.guildId,
           channelId: channel.value,
+          userId: interaction.user.id
         }).save()
         collectedMessage.delete();
       }
