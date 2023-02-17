@@ -2,6 +2,8 @@ const { hours, timezones } = require("../../utils/scheduleOptionsData");
 const momentTimezone = require("moment-timezone")
 const { SlashCommandBuilder, MessageCollector, PermissionFlagsBits } = require("discord.js");
 
+const scheduleSchema = require("../../schemas/schedule-schema")
+
 module.exports = {
   data: new SlashCommandBuilder()
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
@@ -69,7 +71,7 @@ module.exports = {
     const filter = (newMessage) => {
       return newMessage.author.id === interaction.user.id
     }
-
+    console.log(interaction.guildId);
     const collector = interaction.channel.createMessageCollector({filter, max: 1, time:1000 * 60}); 
 
     collector.on('end', async (collected) => {
@@ -79,6 +81,12 @@ module.exports = {
         await interaction.editReply({ content: "You did not reply in time."})
       } else{
         await interaction.editReply({ content: "Your message has been scheduled"})
+        await new scheduleSchema({
+          date: targetDate.valueOf(),
+          content: collectedMessage.content,
+          guildId: interaction.guildId,
+          channelId: channel.value,
+        }).save()
         collectedMessage.delete();
       }
       setTimeout(() => interaction.deleteReply(), 10000);
