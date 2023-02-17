@@ -1,4 +1,6 @@
-const { SlashCommandBuilder, PermissionFlagsBits } = require("discord.js");
+const { hours, timezones } = require("../../utils/scheduleOptionsData");
+const momentTimezone = require("moment-timezone")
+const { SlashCommandBuilder, MessageCollector, PermissionFlagsBits } = require("discord.js");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -10,16 +12,31 @@ module.exports = {
       .setRequired(true)
       .setDescription("choose a channel")
     )
-    // .addStringOption(option =>
-    //   option.setName("yyyy/mm/dd")
-    //   .setRequired(true)
-    //   .setDescription("Date")
-    // )
-    // .addStringOption(option => 
-    //   option.setName("hh:mm")
-    //   .setRequired(true)
-    //   .setDescription("Time")
-    // )
+    .addStringOption(option =>
+      option.setName("yyyy")
+      .setRequired(true)
+      .setDescription("Year")
+    )
+    .addStringOption(option =>
+      option.setName("mm")
+      .setRequired(true)
+      .setDescription("Month")
+    )
+    .addStringOption(option =>
+      option.setName("dd")
+      .setRequired(true)
+      .setDescription("Day")
+    )
+    .addStringOption(option => 
+      option.setName("hour")
+      .setRequired(true)
+      .setDescription("Hour")
+    )
+    .addStringOption(option => 
+      option.setName("minutes")
+      .setRequired(true)
+      .setDescription("Minutes")
+    )
     .addStringOption(option => 
       option.setName("meridiem")
       .setRequired(true)
@@ -27,13 +44,44 @@ module.exports = {
       .addChoices(
         { name: 'AM', value: 'AM' },
         { name: 'PM', value: 'PM' },
-    )),
+    ))
+    .addStringOption(option => 
+      option.setName("timezone")
+      .setRequired(true)
+      .setDescription("Selected a timezone")
+      .addChoices(
+        ...timezones
+      )
+    ),
   async execute(interaction, client) {
+    const [channel, year, month, day, hour, minute, meridiem, timezone] = interaction.options._hoistedOptions;
 
-    // console.log(client.channels.cache);
+    const targetDate = momentTimezone.tz(
+      `${year.value}/${month.value}/${day.value} ${hour.value}:${minute.value} ${meridiem.value}`,
+      'YYYY-MM-DD HH:mm A',
+      timezone.value
+    )
 
     await interaction.reply({
-      content: "This command is under construction",
+      content: "Please send the message you would like to schedule",
     });
+
+    const filter = (newMessage) => {
+      return newMessage.author.id === interaction.user.id
+    }
+
+    const collector = interaction.channel.createMessageCollector({filter, max: 1, time:1000 * 60}); 
+
+    collector.on('end', async (collected) => {
+      const collectedMessage = collected.first();
+
+      if(!collectedMessage){
+        await interaction.editReply({ content: "You did not reply in time."})
+      } else{
+        await interaction.editReply({ content: "Your message has been scheduled"})
+        collectedMessage.delete();
+      }
+      setTimeout(() => interaction.deleteReply(), 10000);
+    })
   },
 };
