@@ -10,7 +10,6 @@ const scheduleSchema = require("../../schemas/schedule-schema");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     .setName("schedule")
     .setDescription("Schedule a message")
     .addChannelOption((option) =>
