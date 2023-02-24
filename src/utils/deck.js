@@ -74,8 +74,36 @@ const nextCard = (deck, used) => {
   return unusedDeck[0]
 }
 
+const checkCardTotal = async (hand) => {
+  let total = 0;
+  let cardsUsed = [];
+  await hand.forEach(card => {
+    if(card.card === "A" && total <= 10){
+      total += card.value.big;
+      cardsUsed.push({ card: [card.card], value: card.value.big })
+    } else if (card.card === "A" && total >= 11){
+      total += card.value.small;
+      cardsUsed.push({ card: [card.card], value: card.value.small})
+    } else{
+      total += card.value;
+      cardsUsed.push({ card: [card.card], value: card.value})
+    }
+  });
+
+  if(total > 21){
+    for(let i = 0; cardsUsed.length <= i; i++){
+      if(cardsUsed[i].card === "A" && cardsUsed[i].value === 11){
+        total -= 10;
+        if(total <= 21) break;
+      }
+    }
+  }
+  return total
+}
+
 module.exports = {
   deck: deck,
   shuffle: shuffle,
   nextCard: nextCard,
+  checkCardTotal: checkCardTotal,
 };
