@@ -6,7 +6,7 @@ module.exports = {
     .setName("blackjack")
     .setDescription("play blackjack"),
   async execute(interaction) {
-    await interaction.reply({content: 'Lets play blackJack'})
+    await interaction.reply({content: 'Lets play blackJack'});
 
     // Initializing game
     let deck = shuffle(Deck);
@@ -21,7 +21,7 @@ module.exports = {
     dealerCards.push(deck.pop());
 
     // Embed showing current condition
-    let embed = embedMaker("player")
+    let embed = embedMaker("player");
 
     // buttons
     const row = new ActionRowBuilder()
@@ -38,7 +38,7 @@ module.exports = {
     
     await interaction.editReply({
       embeds: [embed]
-    })
+    });
 
     // Main function
     async function game() {
@@ -58,6 +58,7 @@ module.exports = {
           playerCards.push(deck.pop())
           const newEmbed = embedMaker("player")
           await interaction.editReply({content: "Hit!", embeds: [newEmbed]})
+          if(checkCardTotal(playerCards) < 21){game()}
         } else if(click.customId === 'stand'){
           await interaction.editReply({content: "Stand!", components: []})
           const newEmbed = embedMaker("dealer")
@@ -70,7 +71,7 @@ module.exports = {
             await pause(2000);
           }
         }
-      })
+      });
     }
 
     function pause(time){
@@ -80,9 +81,9 @@ module.exports = {
     function embedMaker(state) {
       let dealerValue;
       if(state === "player"){
-        dealerValue = `Up Card: ${dealerCards[0].card} Total: ?`
+        dealerValue = `Up Card: ${dealerCards[0].card} Total: ?`;
       } else if (state === "dealer"){
-        dealerValue = `Cards: ${cardsToString(dealerCards)} Total: ${checkCardTotal(dealerCards)}`
+        dealerValue = `Cards: ${cardsToString(dealerCards)} Total: ${checkCardTotal(dealerCards)}`;
       }
       return (new EmbedBuilder()
         .setTitle('Blackjack')
@@ -98,8 +99,8 @@ module.exports = {
             value: `Cards: ${cardsToString(playerCards)} Total: ${checkCardTotal(playerCards)}`,
             inline: false,
           },
-        ]))
-    }
+        ]));
+    };
 
     game();
 
