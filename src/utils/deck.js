@@ -69,15 +69,19 @@ const shuffle = (deck) => {
   return deck;
 }
 
+const cardsToString= (hand) => {
+  return hand.map(card => {return `${card.card}`}).join(", ");
+}
+
 const nextCard = (deck, used) => {
   const unusedDeck = deck.filter(card => !used.some(usedCard => usedCard.number === card.number))
   return unusedDeck[0]
 }
 
-const checkCardTotal = async (hand) => {
+const checkCardTotal = (hand) => {
   let total = 0;
   let cardsUsed = [];
-  await hand.forEach(card => {
+  hand.forEach(card => {
     if(card.card === "A" && total <= 10){
       total += card.value.big;
       cardsUsed.push({ card: [card.card], value: card.value.big })
@@ -106,4 +110,5 @@ module.exports = {
   shuffle: shuffle,
   nextCard: nextCard,
   checkCardTotal: checkCardTotal,
+  cardsToString: cardsToString,
 };
