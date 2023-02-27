@@ -40,6 +40,8 @@ module.exports = {
       embeds: [embed]
     });
 
+    checkForNatural21();
+
     // Main function
     async function game() {
       await interaction.editReply({ components: [row] });
@@ -78,6 +80,7 @@ module.exports = {
               await interaction.editReply({embeds: [newEmbed]})
               await pause(2000);
             }
+            checkWinner();
           }
         }else if(click?.customId === 'stand'){
           await interaction.editReply({content: "Stand!", components: []})
@@ -90,38 +93,42 @@ module.exports = {
             await interaction.editReply({embeds: [newEmbed]})
             await pause(2000);
           }
-          if(checkCardTotal(dealerCards) > 21){
-            await interaction.editReply({content: "Winner!", components: []})
-            await pause(1000);
-            money += 5;
-            await interaction.editReply({ embeds: [embedMaker("dealer")] })
-            await pause(3000);
-            newRound();
-          }else if(checkCardTotal(playerCards) > checkCardTotal(dealerCards)){
-            await interaction.editReply({content: "Winner!", components: []})
-            await pause(1000);
-            money += 5;
-            await interaction.editReply({ embeds: [embedMaker("dealer")] })
-            await pause(3000);
-            newRound();
-          } else if(checkCardTotal(playerCards) < checkCardTotal(dealerCards)){
-            await interaction.editReply({content: "Loser!", components: []})
-            await pause(1000);
-            money -= 5;
-            await interaction.editReply({ embeds: [embedMaker("dealer")] })
-            await pause(3000);
-            newRound();
-          } else {
-            await interaction.editReply({content: "Push!", components: []})
-            await pause(3000);
-            newRound();
-          }
+          checkWinner();
         }
       });
     }
 
     function pause(time){
-      return new Promise((resolve, reject) => setTimeout(resolve, time));
+      return new Promise((resolve) => setTimeout(resolve, time));
+    }
+
+    async function checkWinner(){
+      if(checkCardTotal(dealerCards) > 21){
+        await interaction.editReply({content: "Winner!", components: []})
+        await pause(1000);
+        money += 5;
+        await interaction.editReply({ embeds: [embedMaker("dealer")] })
+        await pause(3000);
+        newRound();
+      }else if(checkCardTotal(playerCards) > checkCardTotal(dealerCards)){
+        await interaction.editReply({content: "Winner!", components: []})
+        await pause(1000);
+        money += 5;
+        await interaction.editReply({ embeds: [embedMaker("dealer")] })
+        await pause(3000);
+        newRound();
+      }else if(checkCardTotal(playerCards) < checkCardTotal(dealerCards)){
+        await interaction.editReply({content: "Loser!", components: []})
+        await pause(1000);
+        money -= 5;
+        await interaction.editReply({ embeds: [embedMaker("dealer")] })
+        await pause(3000);
+        newRound();
+      }else {
+        await interaction.editReply({content: "Push!", components: []})
+        await pause(3000);
+        newRound();
+      }
     }
 
     async function newRound(){
@@ -133,6 +140,7 @@ module.exports = {
       playerCards.push(deck.pop());
       dealerCards.push(deck.pop());
       const embed = embedMaker("player")
+      checkForNatural21();
       await interaction.editReply({content: "new hand", embeds: [embed], components: [row]})
       game();
     }
@@ -161,124 +169,30 @@ module.exports = {
         ]));
     };
 
+    async function checkForNatural21(){
+      const playerNatural21 = playerCards.find(card => card.card == "A") && playerCards.find(card => card.value == 10 );
+      const dealerNatural21 = dealerCards.find(card => card.card == "A") && dealerCards.find(card => card.value == 10 );
+      if(playerNatural21 && dealerNatural21){
+        await interaction.editReply({content: "Push!", components: []})
+        await pause(3000);
+        newRound();
+      }else if(playerNatural21){
+        await interaction.editReply({content: "21!", components: []})
+        await pause(1000);
+        money += 8;
+        await interaction.editReply({ embeds: [embedMaker("dealer")] })
+        await pause(3000);
+        newRound();
+      }else if(dealerNatural21){
+        await interaction.editReply({content: "Dealer 21!", components: []})
+        await pause(1000);
+        money -= 5;
+        await interaction.editReply({ embeds: [embedMaker("dealer")] })
+        await pause(3000);
+        newRound();
+      }
+    }
+
     game();
-
-    // async function gameStateEmbed(money, dealer, player, state, row){
-    //   let dealerCards;
-    //   if(state === 1){
-    //     dealerCards = `${dealer[0].card}, H`;
-    //   } else if(state === 0) {
-    //     await dealerDraw();
-    //     dealerCards = dealer.map(card => {return `${card.card}`}).join(", ");
-    //   } 
-
-    //   if(await checkCardTotal(Dealer) > 21){
-    //     await endRound(state);
-    //   } else if (state === 0 && checkCardTotal(Player) <= checkCardTotal(Player)){
-    //     await endRound(state);
-    //   }
-
-    //   const playerCards = player.map(card => {return `${card.card}`}).join(", ");
-    //   const embed = new EmbedBuilder()
-    //     .setTitle('Blackjack')
-    //     .setDescription(`Money: ${money}`)
-    //     .addFields([
-    //       {
-    //         name: `Dealer`,
-    //         value: `Cards: ${dealerCards}`,
-    //         inline: true,
-    //       },
-    //       {
-    //         name: `Player`,
-    //         value: `Cards: ${playerCards} Total: ${await checkCardTotal(Player)}`,
-    //         inline: false,
-    //       },
-    //     ])
-    //   interactionCollector(embed, row)
-    // }
-
-    // async function dealerDraw(){
-    //   if(await checkCardTotal(Dealer) < 17){
-    //     Dealer.push(await nextCard(Deck, Used))
-    //     Used.push(Dealer[Dealer.length - 1])
-    //     dealerDraw();
-    //   }
-    // }
-
-
-    // async function interactionCollector(embed, row){
-    //   await interaction.editReply({
-    //     embeds: [embed],
-    //     components: [row]
-    //   });
-
-
-    //   const collector = interaction.channel.createMessageComponentCollector({
-    //     max: 1,
-    //     time: 10000 * 60,
-    //   });
-  
-
-    //   collector.on('end', (collection) => {
-    //     collection.forEach(async (click) => {
-    //       click.deferUpdate();
-    //       if(click.customId === 'hit'){
-    //         await interaction.editReply({content: "Hit!"})
-    //         Player.push(nextCard(Deck,Used))
-    //         Used.push(Player[Player.length - 1])
-    //         await endRound();
-    //         // gameStateEmbed(Money, Dealer, Player, 1, row)
-    //       } else if(click.customId === 'stand'){
-    //         await interaction.editReply({content: "Stand!"})
-    //         gameStateEmbed(Money, Dealer, Player, 0, row)
-    //       }
-    //       console.log(click.customId);
-    //     })
-    //   })
-    // }
-
-    // async function endRound(state) {
-    //   const playerTotal = await checkCardTotal(Player);
-    //   const dealerTotal = await checkCardTotal(Dealer);
-    //   if(playerTotal > 21){
-    //     await interaction.editReply({content: "You lost"})
-    //     Money -= 5;
-    //     Player = [await nextCard(Deck, Used)];
-    //     Used.push(Player[Player.length - 1])
-    //     Dealer = [await nextCard(Deck, Used)];
-    //     Used.push(Dealer[Dealer.length - 1])
-    //     Player.push(await nextCard(Deck, Used));
-    //     Used.push(Player[Player.length - 1])
-    //     Dealer.push(await nextCard(Deck, Used));
-    //     Used.push(Dealer[Dealer.length - 1])
-    //     gameStateEmbed(Money, Dealer, Player, 1, row)
-    //   } else if(dealerTotal > 21 || (state === 0 && playerTotal < dealerTotal)) {
-    //     await interaction.editReply({content: "You Won"})
-    //     Money += 5;
-    //     Player = [await nextCard(Deck, Used)];
-    //     Used.push(Player[Player.length - 1])
-    //     Dealer = [await nextCard(Deck, Used)];
-    //     Used.push(Dealer[Dealer.length - 1])
-    //     Player.push(await nextCard(Deck, Used));
-    //     Used.push(Player[Player.length - 1])
-    //     Dealer.push(await nextCard(Deck, Used));
-    //     Used.push(Dealer[Dealer.length - 1])
-    //     gameStateEmbed(Money, Dealer, Player, 1, row)
-    //   } else if(state === 0 && playerTotal === dealerTotal){
-    //     await interaction.editReply({content: "Push"})
-    //     Player = [await nextCard(Deck, Used)];
-    //     Used.push(Player[Player.length - 1])
-    //     Dealer = [await nextCard(Deck, Used)];
-    //     Used.push(Dealer[Dealer.length - 1])
-    //     Player.push(await nextCard(Deck, Used));
-    //     Used.push(Player[Player.length - 1])
-    //     Dealer.push(await nextCard(Deck, Used));
-    //     Used.push(Dealer[Dealer.length - 1])
-    //     gameStateEmbed(Money, Dealer, Player, 1, row)
-    //   }else {
-    //     gameStateEmbed(Money, Dealer, Player, 1, row)
-    //   }
-    // }
-    // gameStateEmbed(Money, Dealer, Player, 1, row)
   },
 };
