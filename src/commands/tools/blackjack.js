@@ -1,4 +1,4 @@
-const { deck: Deck, shuffle, cardsToString, checkCardTotal } = require("../../utils/deck");
+const { standardDeck, shuffle, cardsToString, checkCardTotal } = require("../../utils/deck");
 const { SlashCommandBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle, MessageCollector, EmbedBuilder } = require("discord.js");
 
 module.exports = {
@@ -9,7 +9,7 @@ module.exports = {
     await interaction.reply({content: 'Lets play blackJack'});
 
     // Initializing game
-    let deck = shuffle(Deck);
+    let deck = shuffle(standardDeck.slice());
     let money = 100;
     let dealerCards = [];
     let playerCards = [];
@@ -46,7 +46,7 @@ module.exports = {
     async function game() {
       await interaction.editReply({ components: [row] });
       const filter = (btnInteraction) => {
-        return btnInteraction.user.id === interaction.user.id;
+        return (btnInteraction.user.id === interaction.user.id);
       };
       const collector = interaction.channel.createMessageComponentCollector({
         filter,
@@ -132,6 +132,10 @@ module.exports = {
     }
 
     async function newRound(){
+      if(deck.length <= 13){
+        deck = shuffle(standardDeck.slice());
+      }
+      console.log(deck.length);
       dealerCards = [];
       playerCards = [];
 
@@ -139,8 +143,8 @@ module.exports = {
       dealerCards.push(deck.pop());
       playerCards.push(deck.pop());
       dealerCards.push(deck.pop());
-      const embed = embedMaker("player")
       checkForNatural21();
+      const embed = embedMaker("player")
       await interaction.editReply({content: "new hand", embeds: [embed], components: [row]})
       game();
     }
@@ -170,29 +174,26 @@ module.exports = {
     };
 
     async function checkForNatural21(){
-      const playerNatural21 = playerCards.find(card => card.card == "A") && playerCards.find(card => card.value == 10 );
-      const dealerNatural21 = dealerCards.find(card => card.card == "A") && dealerCards.find(card => card.value == 10 );
+      const playerNatural21 = playerCards.find(card => card.card == "A") && playerCards.find(card => card.value == 10) && playerCards.length == 2;
+      const dealerNatural21 = dealerCards.find(card => card.card == "A") && dealerCards.find(card => card.value == 10) && dealerCards.length == 2;
       if(playerNatural21 && dealerNatural21){
         await interaction.editReply({content: "Push!", components: []})
         await pause(3000);
         newRound();
       }else if(playerNatural21){
-        await interaction.editReply({content: "21!", components: []})
+        await interaction.editReply({content: "21!", embeds: [embedMaker("dealer")], components: []})
         await pause(1000);
         money += 8;
-        await interaction.editReply({ embeds: [embedMaker("dealer")] })
-        await pause(3000);
+        await pause(2000);
         newRound();
       }else if(dealerNatural21){
-        await interaction.editReply({content: "Dealer 21!", components: []})
+        await interaction.editReply({content: "Dealer 21!", embeds: [embedMaker("dealer")], components: []})
         await pause(1000);
         money -= 5;
-        await interaction.editReply({ embeds: [embedMaker("dealer")] })
-        await pause(3000);
+        await pause(2000);
         newRound();
       }
     }
-
     game();
   },
 };
