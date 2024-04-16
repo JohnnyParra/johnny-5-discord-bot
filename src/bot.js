@@ -46,6 +46,18 @@ for (const folder of functionFolders) {
     require(`./functions/${folder}/${file}`)(client);
 }
 
+process.on("unhandledRejection", async (reason, promise) => {
+  console.log("unhandledRejection at: ", promise, "reason: ", reason);
+})
+
+process.on("uncaughtException", async (reason, promise) => {
+  console.log("uncaughtException at: ", promise, "reason: ", reason);
+})
+
+process.on("uncaughtExceptionMonitor", async (reason, promise) => {
+  console.log("uncaughtExceptionMonitor at: ", promise, "reason: ", reason);
+})
+
 client.handleEvents();
 client.handleCommands();
 client.login(token);
