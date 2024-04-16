@@ -38,3 +38,8 @@
    npm run test
    ```
 
+## Example:  
+
+https://github.com/JohnnyParra/johnny-5-discord-bot/assets/102114167/4e096f09-bdd5-4eaf-b69d-fdee9faa0c7e
+
+
