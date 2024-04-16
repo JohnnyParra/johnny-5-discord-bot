@@ -1,4 +1,4 @@
-const { standardDeck, shuffle, cardsToString, checkCardTotal } = require("../../utils/deck");
+const { deck: Deck, shuffle, cardsToString, checkCardTotal } = require("../../utils/deck");
 const { SlashCommandBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle, MessageCollector, EmbedBuilder } = require("discord.js");
 
 module.exports = {

@@ -1,4 +1,4 @@
-const standardDeck = [
+const deck = [
   { number: 1, card: "2", suit: "heart", value: 2 },
   { number: 2, card: "3", suit: "heart", value: 3 },
   { number: 3, card: "4", suit: "heart", value: 4 },
@@ -381,7 +381,7 @@ const checkCardTotal = (hand) => {
 }
 
 module.exports = {
-  standardDeck: standardDeck,
+  deck: deck,
   shuffle: shuffle,
   nextCard: nextCard,
   checkCardTotal: checkCardTotal,
