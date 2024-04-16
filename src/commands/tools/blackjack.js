@@ -142,7 +142,6 @@ module.exports = {
       if(deck.length <= 13){
         deck = shuffle(standardDeck.slice());
       }
-      console.log(deck.length);
       dealerCards = [];
       playerCards = [];
 
