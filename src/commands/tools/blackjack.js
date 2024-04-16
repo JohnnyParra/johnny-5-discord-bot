@@ -1,4 +1,4 @@
-const { deck: Deck, shuffle, cardsToString, checkCardTotal } = require("../../utils/deck");
+const { standardDeck, shuffle, cardsToString, checkCardTotal } = require("../../utils/deck");
 const { SlashCommandBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle, MessageCollector, EmbedBuilder } = require("discord.js");
 
 module.exports = {
@@ -139,6 +139,10 @@ module.exports = {
     }
 
     async function newRound(){
+      if(deck.length <= 13){
+        deck = shuffle(standardDeck.slice());
+      }
+      console.log(deck.length);
       dealerCards = [];
       playerCards = [];
 
@@ -150,6 +154,7 @@ module.exports = {
       dealerCards.push(deck.pop());
       playerCards.push(deck.pop());
       dealerCards.push(deck.pop());
+      checkForNatural21();
       const embed = embedMaker("player")
       await interaction.editReply({content: "new hand", embeds: [embed]})
       game();
@@ -196,19 +201,16 @@ module.exports = {
         await interaction.editReply({content: "21!"})
         await pause(1000);
         money += 8;
-        await interaction.editReply({ embeds: [embedMaker("dealer")] })
-        await pause(3000);
+        await pause(2000);
         newRound();
       }else if(dealerNatural21){
         await interaction.editReply({content: "Dealer 21!"})
         await pause(1000);
         money -= 5;
-        await interaction.editReply({ embeds: [embedMaker("dealer")] })
-        await pause(3000);
+        await pause(2000);
         newRound();
       }
     }
-
     game();
   },
 };
